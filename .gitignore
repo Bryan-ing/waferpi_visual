@@ -11,3 +11,11 @@ __pycache__/
 .ipynb_checkpoints/
 .idea/
 .vscode/
+
+# Archivos de trabajo de Tableau (solo se sube el .twbx empaquetado)
+*.twb
+*.twbr
+*.hyper
+
+# Borradores del documento de entrega
+*.docx

@@ -15,7 +15,7 @@ Este repositorio es la base visual del proyecto de tesis **WaferPi** (clasificac
 |---|---|---|
 | Estática (matplotlib) | Número de dies por oblea vs % de dies fallados | [`figures/final_estatica_diesize_vs_fallo.png`](figures/final_estatica_diesize_vs_fallo.png) |
 | Interactiva (Plotly) | Mapas de oblea por patrón (menú, hover, zoom) | [Ver en línea](https://bryan-ing.github.io/waferpi_visual/figures/final_interactivo_mapas_oblea.html) · [`figures/final_interactivo_mapas_oblea.html`](figures/final_interactivo_mapas_oblea.html) |
-| BI (Tableau Public) | Dashboard: KPIs, obleas y % de fallo por patrón, filtros | [Ver en Tableau Public](https://public.tableau.com/app/profile/bryan.de.la.paz/viz/WaferPi-PatronesdefallaWM-811K/Dashboard1) · [`Dashboard Tableau/waferpi_dashboard.twbx`](Dashboard%20Tableau/waferpi_dashboard.twbx) |
+| BI (Tableau Public) | Dashboard: KPIs, obleas y % de fallo por patrón, filtros | [Ver en Tableau Public](https://public.tableau.com/app/profile/bryan.de.la.paz/viz/WaferPi-PatronesdefallaWM-811K/Dashboard1) · [`Dashboard Tableau/wafer_dashboard.twbx`](Dashboard%20Tableau/wafer_dashboard.twbx) |
 | EDA (Avance 2) | Univariada, bivariada, multivariada y condicional | [`figures/`](figures/) (`avance2_*.png`) |
 
 ![Visualización estática final](figures/final_estatica_diesize_vs_fallo.png)
@@ -37,7 +37,7 @@ waferpi_visual/
 │       └── obleas_etiquetadas.csv  ← tabla por oblea para Tableau (generada por el notebook)
 ├── figures/                      ← figuras generadas por el notebook
 ├── Dashboard Tableau/
-│   └── waferpi_dashboard.twbx    ← dashboard de Tableau empaquetado (incluye extracción de datos)
+│   └── wafer_dashboard.twbx    ← dashboard de Tableau empaquetado (incluye extracción de datos)
 └── docs/
     └── guia_tableau.md           ← pasos para construir el dashboard de Tableau
 ```
