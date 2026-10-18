@@ -39,7 +39,7 @@ waferpi_visual/
 ├── Dashboard Tableau/
 │   └── wafer_dashboard.twbx    ← dashboard de Tableau empaquetado (incluye extracción de datos)
 └── docs/
-    └── guia_tableau.md           ← pasos para construir el dashboard de Tableau
+    └── capturas/                 ← capturas de las visualizaciones interactivas y del dashboard
 ```
 
 ---
