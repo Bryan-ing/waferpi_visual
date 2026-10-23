@@ -16,6 +16,7 @@ Este repositorio es la base visual del proyecto de tesis **WaferPi** (clasificac
 | Estática (matplotlib) | Número de dies por oblea vs % de dies fallados | [`figures/final_estatica_diesize_vs_fallo.png`](figures/final_estatica_diesize_vs_fallo.png) |
 | Interactiva (Plotly) | Mapas de oblea por patrón (menú, hover, zoom) | [Ver en línea](https://bryan-ing.github.io/waferpi_visual/figures/final_interactivo_mapas_oblea.html) · [`figures/final_interactivo_mapas_oblea.html`](figures/final_interactivo_mapas_oblea.html) |
 | BI (Tableau Public) | Dashboard: KPIs, obleas y % de fallo por patrón, filtros | [Ver en Tableau Public](https://public.tableau.com/app/profile/bryan.de.la.paz/viz/WaferPi-PatronesdefallaWM-811K/Dashboard1) · [`Dashboard Tableau/wafer_dashboard.twbx`](Dashboard%20Tableau/wafer_dashboard.twbx) |
+| **Dashboard final (Unidad 4)** | Hallazgo principal, KPIs, % de fallo y obleas por patrón, mapas interactivos, filtro por conjunto | [Ver en línea](https://bryan-ing.github.io/waferpi_visual/dashboard/waferpi_dashboard.html) · [`dashboard/`](dashboard/) |
 | EDA (Avance 2) | Univariada, bivariada, multivariada y condicional | [`figures/`](figures/) (`avance2_*.png`) |
 
 Las capturas y la explicación de cada visualización están en [Documentación de las visualizaciones](#documentación-de-las-visualizaciones).
@@ -94,6 +95,10 @@ waferpi_visual/
 │   └── processed/
 │       └── obleas_etiquetadas.csv  ← tabla por oblea para Tableau (generada por el notebook)
 ├── figures/                      ← figuras generadas por el notebook
+├── dashboard/
+│   ├── construir_dashboard.py    ← genera el dashboard final desde los datos
+│   ├── plantilla.html            ← diseño de la página
+│   └── waferpi_dashboard.html    ← dashboard final (Python + Plotly)
 ├── Dashboard Tableau/
 │   └── wafer_dashboard.twbx    ← dashboard de Tableau empaquetado (incluye extracción de datos)
 └── docs/
@@ -126,6 +131,12 @@ Descarga **WM-811K** de Kaggle (https://www.kaggle.com/datasets/qingyi/wm811k-wa
 jupyter notebook notebooks/waferpi_avance3.ipynb
 ```
 Menú **Run → Run All Cells**. Tarda ~3 minutos (la carga del `.pkl` ocupa ~1 minuto). Al terminar, `figures/` y `data/processed/` quedan regenerados.
+
+### 5. Generar el dashboard final
+```bash
+python dashboard/construir_dashboard.py
+```
+Requiere haber ejecutado antes el notebook (usa `data/processed/obleas_etiquetadas.csv`).
 
 > **Error `No module named 'pandas.indexes'`:** estás usando pandas 2.x. Verifica que activaste el entorno `.venv` con Python 3.11 e instalaste `requirements.txt`.
 
