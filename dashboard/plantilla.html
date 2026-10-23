@@ -85,6 +85,9 @@
       <button data-v="Training">Training</button>
       <button data-v="Test">Test</button>
     </div>
+    <span style="margin-left:14px">Patrones:</span>
+    <div class="pills" id="filtro-patrones" style="margin:0"></div>
+    <div class="pills" style="margin:0"><button id="btn-none">+ Mostrar "none"</button></div>
   </div>
 
   <section class="kpis">
@@ -104,7 +107,7 @@
     </div>
     <div class="tarjeta">
       <h2 id="tit-conteo">Dónde ocurren: el borde domina</h2>
-      <p class="sub">Número de obleas con falla, según patrón</p>
+      <p class="sub">Número de obleas, según patrón</p>
       <div id="g-conteo" class="graf"></div>
     </div>
   </section>
@@ -127,7 +130,7 @@
 
   <footer>
     Fuente: WM-811K (Wu, Jang y Chen, 2015), Kaggle. Elaboración propia: Ing. Bryan Guadalupe De la paz Coronado · Visualización de Datos, Maestría en IA, ITA (TecNM).
-    Las gráficas excluyen las obleas sin patrón (none). El filtro de conjunto aplica a las tarjetas y a las dos gráficas de barras; los mapas son ejemplos fijos.
+    Por defecto las gráficas excluyen las obleas sin patrón (none); el botón "Mostrar none" las agrega para ver el desbalance. El filtro de conjunto aplica a las tarjetas y a las barras; el de patrones, a las barras; los mapas son ejemplos fijos.
     Código: github.com/Bryan-ing/waferpi_visual
   </footer>
 </main>
@@ -138,7 +141,8 @@ const C = { tinta: "#0b0b0b", tinta2: "#52514e", tenue: "#8a8984", linea: "#e6e5
             gris: "#c9c8c2", resalte: "#e0a800", bueno: "#3fa463", fallado: "#f5c400", fondoMapa: "#2f3a33" };
 const fmt = n => n.toLocaleString("es-MX");
 const cfg = { displayModeBar: false, responsive: true };
-let conjunto = "Todos", patron = "Edge-Ring", modo = "todos";
+let conjunto = "Todos", patron = "Edge-Ring", modo = "todos", conNone = false;
+const visibles = new Set(D.patrones);
 
 function base(xTitulo) {
   return {
@@ -152,7 +156,8 @@ function base(xTitulo) {
 }
 
 function barras(div, valores, resaltados, sufijo, xTitulo, nota) {
-  const orden = D.patrones.slice().sort((a, b) => valores[a] - valores[b]);
+  const lista = D.patrones.filter(p => visibles.has(p)).concat(conNone ? ["none"] : []);
+  const orden = lista.sort((a, b) => valores[a] - valores[b]);
   const x = orden.map(p => valores[p]);
   const lay = base(xTitulo);
   lay.annotations = nota ? [nota] : [];
@@ -177,8 +182,8 @@ function pintarResumen() {
   document.getElementById("sub-pct").textContent = "% promedio de dies fallados por oblea · los otros 6 patrones quedan encimados entre "
     + lo.toFixed(0) + "% y " + hi.toFixed(0) + "%";
   document.getElementById("tit-conteo").textContent = "Dónde ocurren: " + Math.round(r.pct_borde) + "% de las fallas, en el borde";
-  barras("g-pct", r.promedio, D.severos, "%", "% promedio de dies fallados", null);
-  barras("g-conteo", r.conteo, D.borde, "", "Obleas con patrón de falla", null);
+  barras("g-pct", Object.assign({}, r.promedio, { none: r.none_promedio }), D.severos, "%", "% promedio de dies fallados", null);
+  barras("g-conteo", Object.assign({}, r.conteo, { none: r.none_conteo }), D.borde, "", conNone ? "Obleas" : "Obleas con patrón de falla", null);
 }
 
 function pintarMapas() {
@@ -220,6 +225,26 @@ D.patrones.forEach(p => {
   pills.appendChild(b);
 });
 segmento("pills", v => { patron = v; pintarMapas(); });
+
+// Filtro de patrones (selección múltiple): clic agrega o quita un patrón de las barras
+const fp = document.getElementById("filtro-patrones");
+D.patrones.forEach(p => {
+  const b = document.createElement("button");
+  b.textContent = p; b.className = "activo";
+  b.addEventListener("click", () => {
+    if (visibles.has(p) && visibles.size > 1) visibles.delete(p); else visibles.add(p);
+    b.classList.toggle("activo", visibles.has(p));
+    pintarResumen();
+  });
+  fp.appendChild(b);
+});
+const bn = document.getElementById("btn-none");
+bn.addEventListener("click", () => {
+  conNone = !conNone;
+  bn.classList.toggle("activo", conNone);
+  bn.textContent = conNone ? "− Quitar \"none\"" : "+ Mostrar \"none\"";
+  pintarResumen();
+});
 segmento("conjunto", v => { conjunto = v; pintarResumen(); });
 segmento("modo", v => { modo = v; pintarMapas(); });
 

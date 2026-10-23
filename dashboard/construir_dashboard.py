@@ -44,6 +44,9 @@ def resumir(df):
         "pct_borde": round(100 * conteo[BORDE].sum() / len(con_patron), 1),
         "conteo": {p: int(conteo.get(p, 0)) for p in PATRONES},
         "promedio": {p: round(float(promedio.get(p, 0)), 1) for p in PATRONES},
+        # "none" se guarda aparte: el dashboard lo muestra solo si el usuario lo activa
+        "none_conteo": int((df["patron"] == "none").sum()),
+        "none_promedio": round(float(df.loc[df["patron"] == "none", "pct_fallados"].mean()), 1),
     }
 
 resumen = {
