@@ -6,7 +6,7 @@
 <title>WaferPi · Dashboard final</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.2/plotly.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
 <style>
   :root {
     --fondo: #f4f3ef;
@@ -16,15 +16,17 @@
     --tenue: #8a8984;
     --linea: #e6e5e1;
     --gris: #c9c8c2;
-    --naranja: #eb6834;
-    --naranja-suave: #fbe4da;
+    --verde: #1f8a4c;
+    --ambar: #e0a800;
+    --die-bueno: #3fa463;
+    --die-fallado: #f5c400;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--fondo); color: var(--tinta);
          font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
   main { max-width: 1240px; margin: 0 auto; padding: 28px 24px 40px; }
 
-  header .eti { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--naranja); }
+  header .eti { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--verde); }
   header h1 { font-size: 32px; line-height: 1.2; margin: 6px 0 8px; font-weight: 700; max-width: 900px; }
   header p { margin: 0; color: var(--tinta2); font-size: 15px; max-width: 860px; }
 
@@ -39,8 +41,8 @@
   .tarjeta { background: var(--tarjeta); border-radius: 12px; padding: 18px 20px; border: 1px solid var(--linea); }
   .kpi .num { font-size: 34px; font-weight: 700; line-height: 1.1; }
   .kpi .txt { font-size: 14px; color: var(--tinta2); margin-top: 6px; line-height: 1.4; }
-  .kpi.heroe { border-left: 5px solid var(--naranja); }
-  .kpi.heroe .num { font-size: 52px; color: var(--naranja); }
+  .kpi.heroe { border-left: 5px solid var(--verde); }
+  .kpi.heroe .num { font-size: 52px; color: var(--verde); }
   .kpi.heroe .txt { font-size: 16px; color: var(--tinta); }
 
   .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
@@ -72,7 +74,7 @@
 <main>
   <header>
     <div class="eti">WaferPi · Patrones de falla en obleas (WM-811K)</div>
-    <h1>El tipo de falla de una oblea se distingue por <span style="color:var(--naranja)">dónde</span> fallan sus dies, no por cuántos</h1>
+    <h1>El tipo de falla de una oblea se distingue por <span style="color:var(--verde)">dónde</span> fallan sus dies, no por cuántos</h1>
     <p>Análisis de 172,950 obleas etiquetadas de fabricación real. El porcentaje de dies fallados solo separa 2 de los 8 patrones; la ubicación espacial de las fallas los distingue a todos.</p>
   </header>
 
@@ -120,7 +122,7 @@
     </div>
     <div class="pills" id="pills"></div>
     <div class="tres"><div id="m0" class="oblea"></div><div id="m1" class="oblea"></div><div id="m2" class="oblea"></div></div>
-    <div class="ley"><span><i style="background:#dddcd6"></i>Die bueno</span><span><i style="background:var(--naranja)"></i>Die fallado</span></div>
+    <div class="ley"><span><i id="ley-bueno" style="background:var(--die-bueno)"></i>Die bueno</span><span><i style="background:var(--die-fallado)"></i>Die fallado</span></div>
   </section>
 
   <footer>
@@ -133,7 +135,7 @@
 <script>
 const D = __DATOS__;
 const C = { tinta: "#0b0b0b", tinta2: "#52514e", tenue: "#8a8984", linea: "#e6e5e1",
-            gris: "#c9c8c2", naranja: "#eb6834", bueno: "#dddcd6", fondoMapa: "#f4f3ef" };
+            gris: "#c9c8c2", resalte: "#e0a800", bueno: "#3fa463", fallado: "#f5c400", fondoMapa: "#2f3a33" };
 const fmt = n => n.toLocaleString("es-MX");
 const cfg = { displayModeBar: false, responsive: true };
 let conjunto = "Todos", patron = "Edge-Ring", modo = "todos";
@@ -156,7 +158,7 @@ function barras(div, valores, resaltados, sufijo, xTitulo, nota) {
   lay.annotations = nota ? [nota] : [];
   Plotly.react(div, [{
     type: "bar", orientation: "h", y: orden, x: x,
-    marker: { color: orden.map(p => resaltados.includes(p) ? C.naranja : C.gris) },
+    marker: { color: orden.map(p => resaltados.includes(p) ? C.resalte : C.gris) },
     text: x.map(v => sufijo === "%" ? v.toFixed(1) + "%" : fmt(v)), textposition: "outside", cliponaxis: false,
     textfont: { color: C.tinta2, size: 12 },
     hovertemplate: "<b>%{y}</b><br>" + (sufijo === "%" ? "%{x:.1f}% de dies fallados en promedio" : "%{x:,} obleas") + "<extra></extra>"
@@ -181,12 +183,13 @@ function pintarResumen() {
 
 function pintarMapas() {
   const fondo = modo === "todos" ? C.bueno : C.fondoMapa;
+  document.getElementById("ley-bueno").style.background = fondo;
   D.mapas[patron].forEach((o, i) => {
     const z = o.mapa.map(f => f.map(v => v === 0 ? null : v));
     const txt = o.mapa.map(f => f.map(v => v === 2 ? "Fallado" : v === 1 ? "Bueno" : ""));
     Plotly.react("m" + i, [{
       type: "heatmap", z: z, text: txt, zmin: 1, zmax: 2, showscale: false, xgap: 1, ygap: 1,
-      colorscale: [[0, fondo], [0.5, fondo], [0.5, C.naranja], [1, C.naranja]],
+      colorscale: [[0, fondo], [0.5, fondo], [0.5, C.fallado], [1, C.fallado]],
       hovertemplate: "<b>" + patron + "</b> · " + o.lote + ", oblea " + o.indice +
                      "<br>Posición (%{x}, %{y}) · die %{text}<extra></extra>"
     }], {
